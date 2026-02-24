@@ -37,7 +37,7 @@ export function validateVideoFile(file: UploadedFileLike): void {
   }
 
   if (file.size > MAX_VIDEO_SIZE_BYTES) {
-    throw new AppError("PAYLOAD_TOO_LARGE", "Video file exceeds 1GB size limit.", 413);
+    throw new AppError("PAYLOAD_TOO_LARGE", "Video file exceeds 10GB size limit.", 413);
   }
 }
 

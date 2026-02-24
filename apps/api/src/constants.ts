@@ -18,7 +18,7 @@ export const ALLOWED_IMAGE_MIME_TYPES = [
   "application/octet-stream"
 ] as const;
 
-export const MAX_VIDEO_SIZE_BYTES = 1024 * 1024 * 1024;
+export const MAX_VIDEO_SIZE_BYTES = 10 * 1024 * 1024 * 1024;
 export const MAX_LOGO_SIZE_BYTES = 20 * 1024 * 1024;
 export const PROCESS_TIMEOUT_MS = 2 * 60 * 60 * 1000;
 export const MAX_TERMINAL_JOBS = 200;

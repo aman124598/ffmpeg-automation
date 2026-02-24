@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".mkv", ".avi"];
 const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"];
-const MAX_VIDEO_UPLOAD_BYTES = 95 * 1024 * 1024;
+const MAX_VIDEO_UPLOAD_BYTES = 10 * 1024 * 1024 * 1024;
 const MAX_LOGO_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
@@ -57,7 +57,7 @@ export default function App() {
     }
 
     if (videoFile.size > MAX_VIDEO_UPLOAD_BYTES) {
-      return "Video is too large for hosted upload. Use a file smaller than 95MB.";
+      return "Video is too large. Use a file smaller than 10GB.";
     }
 
     if (logoFile.size > MAX_LOGO_UPLOAD_BYTES) {
