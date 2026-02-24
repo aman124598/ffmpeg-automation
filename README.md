@@ -78,3 +78,17 @@ Success (`202`):
 - `MISSING_DEPENDENCY`: Ensure `ffmpeg` and `ffprobe` commands are available.
 - `UNREADABLE_MEDIA`: Input file is unsupported/corrupted.
 - `PAYLOAD_TOO_LARGE`: Video > 1GB or logo > 20MB.
+
+## Deploy Notes (Vercel + Render)
+
+### Frontend on Vercel
+- Set project root to `apps/web`
+- Add env var `VITE_API_BASE_URL=https://<your-render-backend-domain>`
+
+### Backend on Render
+Render must install devDependencies during build (TypeScript/Vite/ts types live in dev deps). If you see `TS2688: Cannot find type definition file for 'node'`, update your Render service:
+- Build command: `npm ci --include=dev && npm run build && npm prune --omit=dev`
+- Start command: `npm run start -w @ffmpeg-automation/api`
+- Env vars:
+  - `NODE_ENV=production`
+  - `CORS_ORIGIN=https://<your-vercel-domain>`

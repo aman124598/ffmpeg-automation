@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ffmpeg-automation-api
+    env: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build && npm prune --omit=dev
+    startCommand: npm run start -w @ffmpeg-automation/api
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set this to your deployed Vercel domain (no trailing slash).
+      - key: CORS_ORIGIN
+        value: https://autoffmpeg.vercel.app

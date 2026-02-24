@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ApiError, JobStateResponse, ProcessVideoAccepted } from "@ffmpeg-automation/shared";
+import { Analytics } from "@vercel/analytics/react";
 
 const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".mkv", ".avi"];
 const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"];
@@ -239,6 +240,7 @@ export default function App() {
           </a>
         ) : null}
       </section>
+      <Analytics />
     </main>
   );
 }
