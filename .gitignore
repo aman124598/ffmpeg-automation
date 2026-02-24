@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+.vite/
+*.log
+
+apps/api/storage/uploads/*
+apps/api/storage/outputs/*
+!apps/api/storage/uploads/.gitkeep
+!apps/api/storage/outputs/.gitkeep
+
+apps/api/tests/tmp/
+apps/api/tests/artifacts/
