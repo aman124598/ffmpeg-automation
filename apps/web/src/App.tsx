@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/react";
 
 const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".mkv", ".avi"];
 const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"];
+const MAX_VIDEO_UPLOAD_BYTES = 95 * 1024 * 1024;
+const MAX_LOGO_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -52,6 +54,14 @@ export default function App() {
 
     if (!fileHasAllowedExtension(logoFile, ALLOWED_IMAGE_EXTENSIONS)) {
       return "Logo format must be .png, .jpg, or .jpeg.";
+    }
+
+    if (videoFile.size > MAX_VIDEO_UPLOAD_BYTES) {
+      return "Video is too large for hosted upload. Use a file smaller than 95MB.";
+    }
+
+    if (logoFile.size > MAX_LOGO_UPLOAD_BYTES) {
+      return "Logo is too large. Use a file smaller than 20MB.";
     }
 
     return "";
@@ -134,12 +144,28 @@ export default function App() {
         body: formData
       });
 
-      const payload = (await response.json()) as ProcessVideoAccepted | ApiError;
+      let payload: ProcessVideoAccepted | ApiError | null = null;
+      try {
+        payload = (await response.json()) as ProcessVideoAccepted | ApiError;
+      } catch {
+        payload = null;
+      }
 
       if (!response.ok) {
-        const errorPayload = payload as ApiError;
+        if (response.status === 413) {
+          setStatus("error");
+          setMessage("Upload too large. Reduce file size and try again.");
+          return;
+        }
+        const errorPayload = payload as ApiError | null;
         setStatus("error");
-        setMessage(errorPayload.message);
+        setMessage(errorPayload?.message ?? `Request failed with status ${response.status}.`);
+        return;
+      }
+
+      if (!payload || !("jobId" in payload)) {
+        setStatus("error");
+        setMessage("Unexpected success response from server.");
         return;
       }
 
