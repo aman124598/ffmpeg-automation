@@ -15,6 +15,9 @@ interface ProcessJobInput {
   videoOriginalName: string;
   requestedOutputFileName: string | null;
   jobStore: JobStore;
+  uploadReceivedAt: number;
+  videoSizeBytes: number;
+  logoSizeBytes: number;
 }
 
 function buildFfmpegArgs(videoPath: string, logoPath: string, outputPath: string): string[] {
@@ -35,7 +38,7 @@ function buildFfmpegArgs(videoPath: string, logoPath: string, outputPath: string
     "-c:v",
     "libx264",
     "-preset",
-    "veryfast",
+    "superfast",
     "-crf",
     "23",
     "-pix_fmt",
@@ -132,10 +135,20 @@ export async function processVideoJob(input: ProcessJobInput): Promise<void> {
     outputFileName = safeOutput.fileName;
     outputPath = safeOutput.fullPath;
 
+    const ffmpegStartAt = Date.now();
+    console.info(
+      `[job:${jobId}] ffmpeg_started queueWaitMs=${ffmpegStartAt - input.uploadReceivedAt} validationMs=${ffmpegStartAt - startTime} videoBytes=${input.videoSizeBytes} logoBytes=${input.logoSizeBytes}`
+    );
+
     jobStore.markRunning(jobId, "Processing video");
     await runFfmpegWithProgress(buildFfmpegArgs(input.videoPath, input.logoPath, outputPath), durationSeconds, (progress) => {
       jobStore.updateProgress(jobId, progress, "Processing video");
     });
+
+    const ffmpegFinishedAt = Date.now();
+    console.info(
+      `[job:${jobId}] ffmpeg_finished ffmpegMs=${ffmpegFinishedAt - ffmpegStartAt} totalMs=${ffmpegFinishedAt - input.uploadReceivedAt}`
+    );
 
     jobStore.markComplete(jobId, {
       outputPath,

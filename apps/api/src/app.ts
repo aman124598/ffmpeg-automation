@@ -142,7 +142,11 @@ export function createApp(options: CreateAppOptions): express.Express {
 
       const requestedOutputFileName = sanitizeOutputFileName(parsedBody.data.outputFileName);
       const jobId = randomUUID();
+      const uploadReceivedAt = Date.now();
       jobStore.createJob(jobId);
+      console.info(
+        `[job:${jobId}] upload_received video=${videoFile.originalname} videoBytes=${videoFile.size} logo=${logoFile.originalname} logoBytes=${logoFile.size}`
+      );
 
       void processVideoJob({
         jobId,
@@ -150,7 +154,10 @@ export function createApp(options: CreateAppOptions): express.Express {
         videoPath: videoFile.path,
         logoPath: logoFile.path,
         videoOriginalName: videoFile.originalname,
-        requestedOutputFileName
+        requestedOutputFileName,
+        uploadReceivedAt,
+        videoSizeBytes: videoFile.size,
+        logoSizeBytes: logoFile.size
       });
 
       res.status(202).json({
